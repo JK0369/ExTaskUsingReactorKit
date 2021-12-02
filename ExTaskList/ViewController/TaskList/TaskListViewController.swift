@@ -70,6 +70,11 @@ final class TaskListViewController: UIViewController, StoryboardView {
             .map(Reactor.Action.didSelect)
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
+        
+        addBarButtonItem.rx.tap
+            .map { Reactor.Action.didTapAddButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
     }
     
     private func bindState(_ reactor: TaskListReactor) {
@@ -77,6 +82,20 @@ final class TaskListViewController: UIViewController, StoryboardView {
             .map { $0.sections }
             .bind(to: tableView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.isPresentEditTask }
+            .filter { $0 }
+            .map { _ in reactor.getTaskEditReactorForCreatingTask() }
+            .bind(onNext: presentTaskEditViewController)
+            .disposed(by: disposeBag)
+    }
+    
+    private func presentTaskEditViewController(reactor: TaskEditReactor) {
+        let storyboard = UIStoryboard(name: "TaskEdit", bundle: nil)
+        let viewController = storyboard.instantiateViewController(withIdentifier: TaskEditViewController.className) as! TaskEditViewController
+        viewController.reactor = reactor
+        present(viewController, animated: true)
     }
     
 }

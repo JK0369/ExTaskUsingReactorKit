@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19455" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="TAq-15-0VV">
+    <device id="retina6_0" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Task Edit View Controller-->
+        <scene sceneID="UUc-NY-ffm">
+            <objects>
+                <viewController storyboardIdentifier="TaskEditViewController" id="5jk-Hd-q3d" customClass="TaskEditViewController" customModule="ExTaskList" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="yq1-bX-Ama">
+                        <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4JK-fR-BIX">
+                                <rect key="frame" x="0.0" y="88" width="390" height="44"/>
+                                <items>
+                                    <navigationItem id="I4j-v1-Kxl">
+                                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="MFo-FX-0LX"/>
+                                        <barButtonItem key="rightBarButtonItem" enabled="NO" title="Done" id="tln-LN-Mj4"/>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Memo..." textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="dTq-9z-wIM">
+                                <rect key="frame" x="24" y="156" width="342" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="PJX-Es-pSC"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="dTq-9z-wIM" firstAttribute="top" secondItem="4JK-fR-BIX" secondAttribute="bottom" constant="24" id="3ny-GU-JVh"/>
+                            <constraint firstItem="4JK-fR-BIX" firstAttribute="trailing" secondItem="PJX-Es-pSC" secondAttribute="trailing" id="3zP-Cc-jS1"/>
+                            <constraint firstItem="4JK-fR-BIX" firstAttribute="top" secondItem="PJX-Es-pSC" secondAttribute="top" id="9jd-wi-B6f"/>
+                            <constraint firstItem="PJX-Es-pSC" firstAttribute="trailing" secondItem="dTq-9z-wIM" secondAttribute="trailing" constant="24" id="Np2-sb-JQg"/>
+                            <constraint firstItem="dTq-9z-wIM" firstAttribute="leading" secondItem="PJX-Es-pSC" secondAttribute="leading" constant="24" id="i3p-1G-uiS"/>
+                            <constraint firstItem="4JK-fR-BIX" firstAttribute="leading" secondItem="PJX-Es-pSC" secondAttribute="leading" id="jBr-l1-sFQ"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="vWe-O6-hZN"/>
+                    <connections>
+                        <outlet property="cancelBarButtonItem" destination="MFo-FX-0LX" id="hIV-8p-6l9"/>
+                        <outlet property="doneBarButtonItem" destination="tln-LN-Mj4" id="3Fk-lq-ujr"/>
+                        <outlet property="memoTextField" destination="dTq-9z-wIM" id="E49-W8-Nae"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dpj-WT-0yB" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="360" y="-60.426540284360186"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="wKF-Ch-Kwf">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="TAq-15-0VV" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="2Jt-Lv-Jf5">
+                        <rect key="frame" x="0.0" y="44" width="390" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="5jk-Hd-q3d" kind="relationship" relationship="rootViewController" id="hqo-hp-Wsh"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="oJ8-Xi-cD8" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-569.23076923076917" y="-60.426540284360186"/>
+        </scene>
+    </scenes>
+</document>

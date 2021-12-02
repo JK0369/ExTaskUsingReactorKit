@@ -10,12 +10,14 @@ import RxSwift
 enum TaskEvent {
     case checkMark(id: String)
     case checkUnMark(id: String)
+    case create(task: Task)
 }
 
 protocol TaskService {
     var event: PublishSubject<TaskEvent> { get }
     
     func fetchTasks() -> Observable<[Task]>
+    func create(title: String) -> Observable<Task>
     func setCheckMark(taskId: String, isCheckNow: Bool) -> Observable<Task>
 }
 
@@ -32,6 +34,18 @@ final class TaskServiceImpl: TaskService {
                             Task(title: "Jake의 iOS 앱 개발 알아가기")]
         UserDefaultsManager.tasks = defaultTasks
         return .just(defaultTasks)
+    }
+    
+    func create(title: String) -> Observable<Task> {
+        return fetchTasks()
+            .flatMap { [weak self] tasks -> Observable<Task> in
+                guard let `self` = self else { return .empty() }
+                let newTask = Task(title: title)
+                return self.saveTasks(tasks + [newTask]).map { newTask }
+            }
+            .do(onNext: { task in
+                self.event.onNext(.create(task: task))
+            })
     }
     
     func setCheckMark(taskId: String, isCheckNow: Bool) -> Observable<Task> {

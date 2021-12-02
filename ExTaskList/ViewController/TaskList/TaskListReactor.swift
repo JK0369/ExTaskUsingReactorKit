@@ -24,10 +24,13 @@ class TaskListReactor: Reactor {
     enum Mutation {
         case setSections([TaskListSection])
         case updateSectionItem(IndexPath, TaskListSection.Item)
+        case insertSectionItem(IndexPath, TaskListSection.Item)
+        case presentEditTask
     }
     
     struct State {
         var sections: [TaskListSection]
+        var isPresentEditTask: Bool = false
     }
     
     
@@ -56,8 +59,7 @@ class TaskListReactor: Reactor {
         case .didSelect(let indexPath):
             newMutation = setCheckMarkMutation(indexPath)
         case .didTapAddButton:
-            // TODO:
-            newMutation = .empty()
+            newMutation = .just(.presentEditTask)
         }
         
         return newMutation
@@ -101,6 +103,8 @@ class TaskListReactor: Reactor {
             newMutation = getUpdateSectionItemMutation(taskId: taskId, state: state, isSelectedNow: true)
         case .checkUnMark(let taskId):
             newMutation = getUpdateSectionItemMutation(taskId: taskId, state: state, isSelectedNow: false)
+        case .create(let task):
+            newMutation = getCreateSectionMutation(task: task)
         }
         
         return newMutation
@@ -125,6 +129,13 @@ class TaskListReactor: Reactor {
         return IndexPath(item: item, section: 0)
     }
     
+    private func getCreateSectionMutation(task: Task) -> Observable<Mutation> {
+        let newIndexPath = IndexPath(item: 0, section: 0)
+        let reactor = TaskCellReactor(task: task)
+        return .just(.insertSectionItem(newIndexPath, reactor))
+    }
+    
+    
     // MARK: Reduce
     
     func reduce(state: State, mutation: Mutation) -> State {
@@ -136,8 +147,25 @@ class TaskListReactor: Reactor {
             
         case .updateSectionItem(let indexPath, let item):
             newState.sections[indexPath.section].items[indexPath.item] = item
+            
+        case .insertSectionItem(let indexPath, let item):
+            newState.sections.insert(getTaskListSection(indexPath: indexPath, item: item), at: 0)
+            
+        case .presentEditTask:
+            newState.isPresentEditTask = true
         }
         
         return newState
+    }
+    
+    private func getTaskListSection(indexPath: IndexPath, item: TaskListSection.Item) -> TaskListSection {
+        return TaskListSection(model: Void(), items: [item])
+    }
+    
+    // MARK: Builder
+    
+    func getTaskEditReactorForCreatingTask() -> TaskEditReactor {
+        
+        return TaskEditReactor(initialState: TaskEditReactor.State(title: ""), taskService: taskService)
     }
 }
