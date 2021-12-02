@@ -1,0 +1,6 @@
+framework module Pods_ExTaskList {
+  umbrella header "Pods-ExTaskList-umbrella.h"
+
+  export *
+  module * { export * }
+}
