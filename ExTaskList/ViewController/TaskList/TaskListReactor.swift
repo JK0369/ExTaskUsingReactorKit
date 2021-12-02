@@ -26,10 +26,13 @@ class TaskListReactor: Reactor {
         case updateSectionItem(IndexPath, TaskListSection.Item)
         case insertSectionItem(IndexPath, TaskListSection.Item)
         case presentEditTask
+        case setIsPresentEditTask(Bool)
     }
     
     struct State {
         var sections: [TaskListSection]
+        /// Bool 값은 영구적이므로, sections값이 변경되면 isPresentEditTask도 방출되면서 isPresentEditTask 옵저버가 계속 실행
+        /// Mutation에서 concat으로 true > false로 바꾸어주는 로직 필요
         var isPresentEditTask: Bool = false
     }
     
@@ -59,7 +62,7 @@ class TaskListReactor: Reactor {
         case .didSelect(let indexPath):
             newMutation = setCheckMarkMutation(indexPath)
         case .didTapAddButton:
-            newMutation = .just(.presentEditTask)
+            newMutation = getPresentEditTaskMutation()
         }
         
         return newMutation
@@ -80,6 +83,13 @@ class TaskListReactor: Reactor {
         return taskService
             .setCheckMark(taskId: taskState.id, isCheckNow: taskState.isSelected)
             .flatMap { _ in Observable.empty() }
+    }
+    
+    private func getPresentEditTaskMutation() -> Observable<Mutation> {
+        return Observable.concat([
+            Observable.just(.setIsPresentEditTask(true)),
+            Observable.just(.setIsPresentEditTask(false))
+        ])
     }
     
     
@@ -118,15 +128,15 @@ class TaskListReactor: Reactor {
         return .just(.updateSectionItem(indexPath, reactor))
     }
     
-    private func getState(indexPath: IndexPath) -> TaskCellReactor.State {
-        let taskState = currentState.sections[indexPath.section].items[indexPath.item].currentState
-        return taskState
-    }
-    
     private func getIndexPath(taskId: String, state: State) -> IndexPath? {
         let item = state.sections[0].items.firstIndex(where: { reactor in reactor.currentState.id == taskId })
         guard let item = item else { return nil }
         return IndexPath(item: item, section: 0)
+    }
+    
+    private func getState(indexPath: IndexPath) -> TaskCellReactor.State {
+        let taskState = currentState.sections[indexPath.section].items[indexPath.item].currentState
+        return taskState
     }
     
     private func getCreateSectionMutation(task: Task) -> Observable<Mutation> {
@@ -149,17 +159,17 @@ class TaskListReactor: Reactor {
             newState.sections[indexPath.section].items[indexPath.item] = item
             
         case .insertSectionItem(let indexPath, let item):
-            newState.sections.insert(getTaskListSection(indexPath: indexPath, item: item), at: 0)
+            newState.sections[0].items.insert(item, at: 0)
             
         case .presentEditTask:
-            newState.isPresentEditTask = true
+            break
+            
+        case .setIsPresentEditTask(let isPresent):
+            newState.isPresentEditTask = isPresent
+            
         }
         
         return newState
-    }
-    
-    private func getTaskListSection(indexPath: IndexPath, item: TaskListSection.Item) -> TaskListSection {
-        return TaskListSection(model: Void(), items: [item])
     }
     
     // MARK: Builder

@@ -85,6 +85,7 @@ final class TaskListViewController: UIViewController, StoryboardView {
         
         reactor.state
             .map { $0.isPresentEditTask }
+            .distinctUntilChanged()
             .filter { $0 }
             .map { _ in reactor.getTaskEditReactorForCreatingTask() }
             .bind(onNext: presentTaskEditViewController)
